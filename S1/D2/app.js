@@ -182,4 +182,3 @@ console.log(avisUtilisateurs.filter((element) => element.note >= 4));
 console.log(avisUtilisateurs.filter((element) => element.note <= 2));
 let AvisSortedArray = avisUtilisateurs.sort((a,b) => a.commentaire.length - b.commentaire.length)
 console.log(avisUtilisateurs[avisUtilisateurs.length - 1]);
-
