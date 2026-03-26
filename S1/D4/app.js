@@ -72,31 +72,60 @@ let panier = [
 // removeProduct(1)
 // console.log(panier);
 
-function calculatePrice(productId){
-    let product = panier.find(p => p.productId === productId)
-    let productPrice = 0
-    catalogueProducts.forEach(element => {
-        if (element.id === productId) {
-            productPrice = element.prix
-        }
-    });    
-    console.log(product.quantity * productPrice);    
+// function calculatePrice(productId){
+//     let product = panier.find(p => p.productId === productId)
+//     let productPrice = 0
+//     catalogueProducts.forEach(element => {
+//         if (element.id === productId) {
+//             productPrice = element.prix
+//         }
+//     });    
+//     return product.quantity * productPrice   
+// }
+
+// calculatePrice(1)
+
+// function applyPromo(code, productId) {
+//     if (localStorage.getItem("code") || localStorage.getItem("code2") || localStorage.getItem("code3") === code) {
+//         console.log("code has been expired");
+        
+//     }else{
+//         if (code === "BIENVENUE") {
+//             remise = calculatePrice(productId) - (calculatePrice(productId) * 0.15);
+//             localStorage.setItem("code", "BIENVENUE")
+//         }
+//         else if (code === "NOEL2025" && calculatePrice(productId) > 50) {
+//             remise = calculatePrice(productId) - 10;
+//             localStorage.setItem("code2", "NOEL2025")
+//         }
+//         else if (code === "LIVGRATUITE") {
+//             remise = calculatePrice(productId) - 7;
+//             localStorage.setItem("code3", "NOEL2025")
+//         }
+//         console.log(remise);
+//     }
+// }
+
+// applyPromo("NOEL2025", 1)
+
+// Challenge 3
+
+let currencies = {
+    "USD": 1.08,
+    "GBP": 0.86,
+    "MAD": 10.85,
+    "JPY": 162.5,
+    "CAD": 1.47
 }
 
-calculatePrice(1)
+function convert(price, deviseSource, deviseCible){
 
-function applyPromo(code, totalHT) {
-    let remise = 0;
+}
 
-    if (code === "BIENVENUE") {
-        remise = totalHT * 0.15;
-    }
-    else if (code === "NOEL2025" && totalHT > 50) {
-        remise = 10;
-    }
-    else if (code === "LIVGRATUITE") {
-        remise = 7;
-    }
+function convertCart(cart, deviseSource, deviseCible){
 
-    return remise;
+}
+
+function meilleurTaux(montant, deviseSource){
+
 }
