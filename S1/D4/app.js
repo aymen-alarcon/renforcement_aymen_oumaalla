@@ -1,33 +1,159 @@
-// Challenge 1
+//Challenge 1
 
-let reservations = [
-    { id: 1, nom_client: "Dupont Jean", nombre_personnes: 4, date: "2024-05-15", heure: "19:00", statut: "confirmée", telephone: "0612345678" },
-    { id: 2, nom_client: "Martin Sophie", nombre_personnes: 2, date: "2024-05-15", heure: "20:30", statut: "en attente", telephone: "0678901234" },
-    { id: 3, nom_client: "Leroy Pierre", nombre_personnes: 6, date: "2024-05-16", heure: "18:45", statut: "confirmée", telephone: "0699123456" },
-    { id: 4, nom_client: "Moreau Claire", nombre_personnes: 3, date: "2024-05-16", heure: "21:00", statut: "annulée", telephone: "0687654321" },
-    { id: 5, nom_client: "Bernard Luc", nombre_personnes: 5, date: "2024-05-17", heure: "19:30", statut: "confirmée", telephone: "0623456789" }
-];
+let capacity = 30;
+let reservations = [];
+let nextId = 1;
 
-function addReservation(){
+function totalConfirmed(date, hour) {
+    let totalPeople = 0;
 
+    for (let index = 0; index < reservations.length; index++) {
+        let reservation = reservations[index];
+
+        if (
+            reservation.date === date &&
+            reservation.heure === hour &&
+            reservation.statut === "confirmée"
+        ) {
+            totalPeople += reservation.nombre_personnes;
+        }
+    }
+
+    console.log(totalPeople);
 }
+
+function ajouterReservation(clientName, peopleCount, date, hour, phoneNumber) {
+    let currentTotal = totalConfirmed(date, hour);
+    let status = currentTotal + peopleCount <= capacity ? "confirmée" : "en attente";
+
+    reservations.push({
+        id: nextId++,
+        nom_client: clientName,
+        nombre_personnes: peopleCount,
+        date: date,
+        heure: hour,
+        statut: status,
+        telephone: phoneNumber
+    });
+}
+
+function annulerReservation(id) {
+    let reservationDate = null;
+    let reservationHour = null;
+
+    for (let index = 0; index < reservations.length; index++) {
+        let reservation = reservations[index];
+
+        if (reservation.id === id) {
+            reservation.statut = "annulée";
+            reservationDate = reservation.date;
+            reservationHour = reservation.heure;
+        }
+    }
+
+    let totalAfterCancellation = totalConfirmed(reservationDate, reservationHour);
+    let waitingList = [];
+
+    for (let index = 0; index < reservations.length; index++) {
+        let reservation = reservations[index];
+
+        if (
+            reservation.date === reservationDate &&
+            reservation.heure === reservationHour &&
+            reservation.statut === "en attente"
+        ) {
+            waitingList.push(reservation);
+        }
+    }
+
+    waitingList.sort(function (a, b) {
+        return a.id - b.id;
+    });
+
+    for (let index = 0; index < waitingList.length; index++) {
+        let waitingReservation = waitingList[index];
+
+        if (totalAfterCancellation + waitingReservation.nombre_personnes <= capacity) {
+            waitingReservation.statut = "confirmée";
+            totalAfterCancellation += waitingReservation.nombre_personnes;
+        }
+    }
+}
+
+function listerReservations(date) {
+    let resultList = [];
+
+    for (let index = 0; index < reservations.length; index++) {
+        let reservation = reservations[index];
+        if (reservation.date === date) {
+            resultList.push(reservation);
+        }
+    }
+
+    resultList.sort(function (a, b) {
+        return a.heure.localeCompare(b.heure);
+    });
+
+    console.log(resultList);
+}
+
+function tauxOccupation(date) {
+    let occupationByHour = {};
+    let result = {};
+
+    for (let index = 0; index < reservations.length; index++) {
+        let reservation = reservations[index];
+
+        if (reservation.date === date && reservation.statut === "confirmée") {
+            if (occupationByHour[reservation.heure] === undefined) {
+                occupationByHour[reservation.heure] = 0;
+            }
+            occupationByHour[reservation.heure] += reservation.nombre_personnes;
+        }
+    }
+
+    let hours = Object.keys(occupationByHour);
+
+    for (let index = 0; index < hours.length; index++) {
+        let hour = hours[index];
+        let percentage = (occupationByHour[hour] / capacity) * 100;
+        result[hour] = percentage.toFixed(2) + "%";
+    }
+
+    console.log(result);
+}
+
+// Tests
+ajouterReservation("Alice", 10, "2026-03-30", "20:00", "0600000001");
+ajouterReservation("Bob", 8, "2026-03-30", "20:00", "0600000002");
+ajouterReservation("Chris", 12, "2026-03-30", "20:00", "0600000003");
+ajouterReservation("David", 5, "2026-03-30", "20:00", "0600000004");
+ajouterReservation("Emma", 4, "2026-03-30", "19:00", "0600000005");
+ajouterReservation("Farah", 10, "2026-03-30", "19:00", "0600000006");
+ajouterReservation("Hugo", 10, "2026-03-30", "19:00", "0600000007");
+ajouterReservation("Ian", 5, "2026-03-30", "20:00", "0600000008");
+
+annulerReservation(2);
+
+console.log(listerReservations("2026-03-30"));
+console.log(tauxOccupation("2026-03-30"));
 
 // Challenge 2
 
-let catalogueProducts = [
-    { id: 1, nom: "iPhone 15 Pro", prix: 1199, stock_disponible: 15},
-    { id: 2, nom: "MacBook Air M3", prix: 1499, stock_disponible: 8},
-    { id: 3, nom: "AirPods Pro 2", prix: 279, stock_disponible: 25},
-    { id: 4, nom: "Apple Watch Ultra", prix: 899, stock_disponible: 12},
-    { id: 5, nom: "iPad Pro M4", prix: 1299, stock_disponible: 6},
-    { id: 6, nom: "Apple Pencil Pro", prix: 149, stock_disponible: 20}
-];
+// let catalogueProducts = [
+//     { id: 1, nom: "iPhone 15 Pro", prix: 1199, stock_disponible: 15},
+//     { id: 2, nom: "MacBook Air M3", prix: 1499, stock_disponible: 8},
+//     { id: 3, nom: "AirPods Pro 2", prix: 279, stock_disponible: 25},
+//     { id: 4, nom: "Apple Watch Ultra", prix: 899, stock_disponible: 12},
+//     { id: 5, nom: "iPad Pro M4", prix: 1299, stock_disponible: 6},
+//     { id: 6, nom: "Apple Pencil Pro", prix: 149, stock_disponible: 20}
+// ];
 
-let panier = [
-    { productId: 1, quantity: 1 },
-    { productId: 3, quantity: 2 },
-    { productId: 6, quantity: 3 }
-];
+// let panier = [
+//     { productId: 1, quantity: 1 },
+//     { productId: 3, quantity: 2 },
+//     { productId: 6, quantity: 3 }
+// ];
 
 // function addProduct(productId, quantity){
 //     if(!panier.find((element) => element.productId === productId)){
